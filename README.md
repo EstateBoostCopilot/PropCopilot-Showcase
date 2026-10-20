@@ -83,7 +83,7 @@ PropCopilot combines a conversational interface, relevant context, specialized a
 4. **Act within the boundary.** The application controls what can execute; model text alone is not permission.
 5. **Check and communicate.** Observe the result, continue when needed, and distinguish completion from partial or unknown outcomes.
 
-### How the product fits together
+### 1. How the product fits together
 
 ```mermaid
 flowchart LR
@@ -99,18 +99,53 @@ flowchart LR
 
 Cloud-assisted features require connectivity. A desktop workspace is not a promise that all processing happens offline. Access to information and permission to communicate it externally remain separate concerns.
 
-### The Agent workflow
+**Read the diagram:** the property agent works in PropCopilot. The workspace brings permitted records and connected channels into the task. EBC supports cloud-assisted functions, including access to AI model services. Results return to the workspace as answers, work products or visible changes.
 
-<details>
-<summary><strong>View the workflow diagram</strong></summary>
+### 2. The complete Agent workflow
 
 <p align="center"><img src="assets/agent-workflow.png" width="880" alt="Conceptual PropCopilot Agent workflow from request and context through reasoning, controlled actions, observations and delivery"></p>
 
-*Owner-supplied explanatory diagram. It communicates the architecture at a conceptual level, not a public API, fixed model configuration or complete acceptance record.*
+[Open the full-size workflow image](assets/agent-workflow.png).
 
-</details>
+**Read from top to bottom.** A request becomes a task. The runtime, which manages the task as it runs, brings together instructions and relevant context. It asks for a next step, checks whether that step may execute, observes the result, and continues toward delivery.
 
-See [How PropCopilot Works](docs/how-it-works.md) for a director-level explanation of context, coordination, execution and continuity, without proprietary implementation details.
+| Stage | What it means | Why it matters |
+| --- | --- | --- |
+| **Request and task state** | Keep the requested outcome, boundaries and progress together | The work has a goal beyond producing a reply |
+| **Prompt and context** | Combine operating guidance with relevant, permitted records, history and preferences | The assistant can work with the situation, not only the latest sentence |
+| **Decision** | Select a useful next step: find information, use a capability, coordinate specialist help or ask a question | Different tasks can follow different paths |
+| **Controlled execution** | Check the proposed action against the applicable permissions and requirements | Model output alone cannot authorize an action |
+| **Observation and continuation** | Read back what happened and use that result in the next decision | A failed step or missing fact can change the plan |
+| **Review and delivery** | Compare the result with the requested outcome; report completed work and open items | A proposed finish is not automatically a completed task |
+
+**The side paths matter too.** A necessary decision can pause the work. Continuing requires checking the current situation again. Stop ends further work; it does not undo effects already committed. Saved progress supports continuity, not a promise that any interrupted task can always recover.
+
+*Owner-supplied explanatory diagram. It communicates the architecture at a conceptual level, not a public API, fixed model configuration or complete acceptance record. Named paths illustrate the design; availability depends on the release and authorized capabilities.*
+
+### 3. What happens during a task
+
+```mermaid
+sequenceDiagram
+    actor Person as Property agent
+    participant Workspace as PropCopilot workspace
+    participant Assistance as AI assistance
+    participant Capabilities as Permitted capabilities
+    Person->>Workspace: Outcome and boundaries
+    Workspace->>Assistance: Relevant permitted context
+    loop Until delivery or a necessary interruption
+        Assistance->>Workspace: Proposed next step
+        Workspace->>Capabilities: Validate and perform permitted work
+        Capabilities-->>Workspace: Observed result
+        Workspace-->>Assistance: Result and remaining work
+    end
+    Workspace-->>Person: Outcome, visible changes and open items
+```
+
+**The key is the return path.** Reasoning proposes a step; the application controls execution; the observed result informs the next step. Specialist help, when needed, contributes to the same requested outcome rather than creating unrelated work.
+
+For the rental-listing example above, this could mean reading the selected records, checking the client's requirements, preparing supported viewing material, and checking the saved output. Missing information stays visible. The instruction not to contact anyone or publish anything continues to apply throughout the task.
+
+These diagrams explain the intended working principles, not a guarantee that every path is available or validated in every release. See [How PropCopilot Works](docs/how-it-works.md) for more context without proprietary implementation details.
 
 ## User control is part of the product
 
