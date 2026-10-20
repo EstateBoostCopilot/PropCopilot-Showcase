@@ -1,0 +1,12 @@
+# Only intentionally reviewed presentation files belong in this repository.
+*
+!.gitignore
+!README.md
+!docs/
+!docs/zh-CN.md
+!docs/how-it-works.md
+!assets/
+!assets/icon.png
+!assets/agent-workflow.png
+!assets/assistant-privacy-edited.png
+!assets/listings-privacy-edited.png
